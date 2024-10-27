@@ -1,5 +1,5 @@
 ---
-- name: Configure Windows hostname, install IIS and IIS Management Console, and reboot if required
+- name: Configure Windows hostname, install IIS, disable IPv6, and set up IIS site with code from GitHub
   hosts: IIS
   gather_facts: no
 
@@ -25,13 +25,48 @@
       debug:
         var: iis_install_result
 
-    - name: Reboot if required by installation
+    - name: Disable IPv6 on the NIC
+      ansible.windows.win_regedit:
+        path: HKLM\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters
+        name: DisabledComponents
+        type: dword
+        value: 0xFFFFFFFF  # Disables all IPv6 components
+      register: disable_ipv6_result
+
+    - name: Display result of IPv6 disable task
+      debug:
+        var: disable_ipv6_result
+
+    - name: Reboot if required by IIS installation or IPv6 setting
       ansible.windows.win_reboot:
-      when: iis_install_result.reboot_required
+      when: iis_install_result.reboot_required or disable_ipv6_result.reboot_required
       register: reboot_result
 
     - name: Wait for system to come back after reboot
       ansible.windows.win_wait_for:
         port: 5986  # Default WinRM port, adjust if needed
         timeout: 300
-      when: iis_install_result.reboot_required
+      when: iis_install_result.reboot_required or disable_ipv6_result.reboot_required
+
+    - name: Clone IIS website code from GitHub
+      ansible.windows.win_git:
+        repo: https://github.com/AzureWorkshops/samples-simple-iis-website
+        dest: C:\inetpub\wwwroot\samples-simple-iis-website
+        update: yes
+      register: git_clone_result
+
+    - name: Display result of Git clone
+      debug:
+        var: git_clone_result
+
+    - name: Configure IIS site for the cloned website
+      ansible.windows.win_iis_website:
+        name: "SampleIISWebsite"
+        physical_path: "C:\\inetpub\\wwwroot\\samples-simple-iis-website"
+        state: started
+        port: 80
+      register: iis_site_result
+
+    - name: Display result of IIS site configuration
+      debug:
+        var: iis_site_result
