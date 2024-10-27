@@ -27,11 +27,12 @@
 
     - name: Disable IPv6 on the NIC
       ansible.windows.win_regedit:
-        path: HKLM\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters
+        path: 'HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters'
         name: DisabledComponents
         type: dword
         value: 0xFFFFFFFF  # Disables all IPv6 components
-      register: disable_ipv6_result
+    register: disable_ipv6_result
+
 
     - name: Display result of IPv6 disable task
       debug:
