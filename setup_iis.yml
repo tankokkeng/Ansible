@@ -36,18 +36,6 @@
     - name: Display result of IPv6 disable task
       debug:
         var: disable_ipv6_result
-
-    - name: Reboot if required by IIS installation or IPv6 setting
-      ansible.windows.win_reboot:
-      when: iis_install_result.reboot_required or disable_ipv6_result.reboot_required
-      register: reboot_result
-
-    - name: Wait for system to come back after reboot
-      ansible.windows.win_wait_for:
-        port: 5986  # Default WinRM port, adjust if needed
-        timeout: 300
-      when: iis_install_result.reboot_required or disable_ipv6_result.reboot_required
-
     - name: Install Chocolatey
       win_chocolatey_facts:
 
