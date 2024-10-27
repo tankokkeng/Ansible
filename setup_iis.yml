@@ -49,7 +49,7 @@
       when: iis_install_result.reboot_required or disable_ipv6_result.reboot_required
 
     - name: Install Git using Chocolatey
-      ansible.windows.win_chocolatey:
+      win_chocolatey:
         name: git
         state: present
       register: git_install_result
