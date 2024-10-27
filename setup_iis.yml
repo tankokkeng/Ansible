@@ -39,12 +39,12 @@
 
     # Ensure Chocolatey is installed before using it to install Git
     - name: Install Chocolatey
-      ansible.windows.win_chocolatey:
+      win_chocolatey:
         name: chocolatey
         state: present
 
     - name: Install Git using Chocolatey
-      ansible.windows.win_chocolatey:
+      win_chocolatey:
         name: git
         state: present
       register: git_install_result
