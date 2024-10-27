@@ -1,48 +1,24 @@
 ---
-# Playbook to install and configure IIS on Windows Server
-- name: Setup IIS with best practices
-  hosts: IIS
-  gather_facts: yes
+- name: Configure Windows hostname and install IIS
+  hosts: IIS  # Define your target hosts here
+  gather_facts: no  # Optional for Windows setups
+
   tasks:
-    - name: Install IIS Web-Server feature
-      win_feature:
+    - name: Set the hostname to "PG-IIS"
+      ansible.windows.win_hostname:
+        name: PG-IIS
+      register: hostname_result
+
+    - name: Display result of hostname change
+      debug:
+        var: hostname_result
+
+    - name: Install IIS
+      ansible.windows.win_feature:
         name: Web-Server
         state: present
-      register: iis_installed
+      register: iis_install_result
 
-    - name: Start IIS service
-      win_service:
-        name: w3svc
-        start_mode: auto
-        state: started
-      when: iis_installed.changed
-
-    - name: Set IIS logging directory
-      win_command: powershell.exe -Command "Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\InetStp' -Name LogFileDirectory -Value 'C:\inetpub\logs\LogFiles'"
-      register: logging_dir_set
-      changed_when: logging_dir_set.stdout != ""
-
-    - name: Configure default website properties
-      win_iis_website:
-        name: "Default Web Site"
-        state: started
-        physical_path: C:\inetpub\wwwroot
-        port: 80
-        ip: '*'
-        hostname: ''
-      register: default_site_configured
-
-    - name: Ensure index.html exists with default content
-      win_copy:
-        content: "<html><body><h1>Welcome to IIS on Windows Server</h1><p>Configured by Ansible</p></body></html>"
-        dest: C:\inetpub\wwwroot\index.html
-      when: default_site_configured.changed
-
-    - name: Ensure firewall allows HTTP traffic (Port 80)
-      win_firewall_rule:
-        name: "Allow HTTP"
-        enable: yes
-        direction: in
-        action: allow
-        protocol: TCP
-        localport: 80
+    - name: Display result of IIS installation
+      debug:
+        var: iis_install_result
