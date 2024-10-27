@@ -1,5 +1,5 @@
 ---
-- name: Configure Windows hostname, install IIS, disable IPv6, and set up IIS site with code from GitHub
+- name: Configure Windows hostname, install IIS, disable IPv6, install Chocolatey and Git, and set up IIS site with code from GitHub
   hosts: IIS
   gather_facts: no
 
@@ -48,16 +48,44 @@
         timeout: 300
       when: iis_install_result.reboot_required or disable_ipv6_result.reboot_required
 
-    - name: Clone IIS website code from GitHub
-      ansible.windows.win_git:
-        repo: https://github.com/AzureWorkshops/samples-simple-iis-website
-        dest: C:\inetpub\wwwroot\samples-simple-iis-website
-        update: yes
-      register: git_clone_result
+    - name: Install Chocolatey
+      ansible.windows.win_shell: |
+        Set-ExecutionPolicy Bypass -Scope Process -Force;
+        [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072;
+        iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+      register: chocolatey_install_result
+      changed_when: "'Chocolatey v' in chocolatey_install_result.stdout"
 
-    - name: Display result of Git clone
+    - name: Display result of Chocolatey installation
       debug:
-        var: git_clone_result
+        var: chocolatey_install_result
+
+    - name: Install Git using Chocolatey
+      ansible.windows.win_chocolatey:
+        name: git
+        state: present
+      register: git_install_result
+      when: "'Chocolatey v' in chocolatey_install_result.stdout"  # Ensure Chocolatey is installed
+
+    - name: Display result of Git installation
+      debug:
+        var: git_install_result
+
+    - name: Clone IIS website code from GitHub if not already present
+      ansible.windows.win_command: |
+        git clone https://github.com/AzureWorkshops/samples-simple-iis-website C:\inetpub\wwwroot\samples-simple-iis-website
+      args:
+        chdir: C:\inetpub\wwwroot
+      register: git_clone_result
+      ignore_errors: yes  # Ignore errors if repo already exists
+
+    - name: Update IIS website code if already cloned
+      ansible.windows.win_command: |
+        git pull
+      args:
+        chdir: C:\inetpub\wwwroot\samples-simple-iis-website
+      when: git_clone_result.failed  # Only run if the clone command failed (repo already exists)
+      register: git_pull_result
 
     - name: Configure IIS site for the cloned website
       ansible.windows.win_iis_website:
