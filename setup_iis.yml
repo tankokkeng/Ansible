@@ -1,7 +1,7 @@
 ---
-- name: Configure Windows hostname and install IIS
-  hosts: IIS  # Define your target hosts here
-  gather_facts: no  # Optional for Windows setups
+- name: Configure Windows hostname and install IIS with reboot if required
+  hosts: IIS
+  gather_facts: no
 
   tasks:
     - name: Set the hostname to "PG-IIS"
@@ -22,3 +22,14 @@
     - name: Display result of IIS installation
       debug:
         var: iis_install_result
+
+    - name: Reboot if required by IIS installation
+      ansible.windows.win_reboot:
+      when: iis_install_result.reboot_required
+      register: reboot_result
+
+    - name: Wait for system to come back after reboot
+      ansible.windows.win_wait_for:
+        port: 5986  # Default WinRM port, adjust if needed
+        timeout: 300
+      when: iis_install_result.reboot_required
