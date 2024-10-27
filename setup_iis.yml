@@ -31,20 +31,23 @@
         name: DisabledComponents
         type: dword
         value: 0xFFFFFFFF  # Disables all IPv6 components
-      register: disable_ipv6_result  # Fix indentation
+      register: disable_ipv6_result  # Ensure this is correctly indented
 
     - name: Display result of IPv6 disable task
       debug:
         var: disable_ipv6_result
+
+    # Ensure Chocolatey is installed before using it to install Git
     - name: Install Chocolatey
-      win_chocolatey_facts:
+      ansible.windows.win_chocolatey:
+        name: chocolatey
+        state: present
 
     - name: Install Git using Chocolatey
-      win_chocolatey:
+      ansible.windows.win_chocolatey:
         name: git
         state: present
       register: git_install_result
-      when: "'Chocolatey v' in chocolatey_install_result.stdout"  # Ensure Chocolatey is installed
 
     - name: Display result of Git installation
       debug:
