@@ -1,8 +1,0 @@
----
-# Playbook to ping all IIS servers
-- name: Ping all IIS servers
-  hosts: IIS
-  gather_facts: no
-  tasks:
-    - name: Ping IIS servers
-      ansible.builtin.ping:
