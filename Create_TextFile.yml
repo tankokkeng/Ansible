@@ -1,21 +1,21 @@
 ---
-# Playbook to create a file and write text on a Windows server
+# Playbook to create a helloworld.txt file and add text on Windows servers
 - name: Create a helloworld.txt file and add text on Windows servers
   hosts: IIS
   gather_facts: no
   tasks:
     - name: Ensure C:\temp directory exists
-      ansible.windows.win_file:
+      win_file:
         path: C:\temp
         state: directory
 
     - name: Create helloworld.txt file
-      ansible.windows.win_file:
+      win_file:
         path: C:\temp\helloworld.txt
         state: touch
 
     - name: Write text to helloworld.txt
-      ansible.windows.win_lineinfile:
+      win_lineinfile:
         path: C:\temp\helloworld.txt
         line: "Welcome to the world of Ansible"
         create: yes
