@@ -31,8 +31,7 @@
         name: DisabledComponents
         type: dword
         value: 0xFFFFFFFF  # Disables all IPv6 components
-    register: disable_ipv6_result
-
+      register: disable_ipv6_result  # Fix indentation
 
     - name: Display result of IPv6 disable task
       debug:
@@ -49,8 +48,11 @@
         timeout: 300
       when: iis_install_result.reboot_required or disable_ipv6_result.reboot_required
 
+    - name: Install Chocolatey
+      ansible.windows.win_chocolatey_facts:
+
     - name: Install Git using Chocolatey
-      win_chocolatey:
+      ansible.windows.win_chocolatey:
         name: git
         state: present
       register: git_install_result
