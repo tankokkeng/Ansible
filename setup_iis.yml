@@ -1,5 +1,5 @@
 ---
-- name: Configure Windows hostname and install IIS with reboot if required
+- name: Configure Windows hostname, install IIS and IIS Management Console, and reboot if required
   hosts: IIS
   gather_facts: no
 
@@ -13,17 +13,19 @@
       debug:
         var: hostname_result
 
-    - name: Install IIS
+    - name: Install IIS and IIS Management Console
       ansible.windows.win_feature:
-        name: Web-Server
+        name:
+          - Web-Server           # IIS
+          - Web-Mgmt-Console     # IIS Management Console
         state: present
       register: iis_install_result
 
-    - name: Display result of IIS installation
+    - name: Display result of IIS and IIS Management Console installation
       debug:
         var: iis_install_result
 
-    - name: Reboot if required by IIS installation
+    - name: Reboot if required by installation
       ansible.windows.win_reboot:
       when: iis_install_result.reboot_required
       register: reboot_result
