@@ -1,8 +1,8 @@
 ---
-# Playbook to ping all IIS servers
-- name: Ping all IIS servers
+# Playbook to ping Windows servers
+- name: Ping all Windows servers
   hosts: IIS
   gather_facts: no
   tasks:
-    - name: Ping IIS servers
-      ansible.builtin.ping:
+    - name: Ping Windows servers
+      ansible.windows.win_ping:
