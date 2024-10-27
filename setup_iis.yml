@@ -76,7 +76,7 @@
       register: git_pull_result
 
     - name: Configure IIS site for the cloned website
-      ansible.windows.win_iis_website:
+      community.windows.win_iis_website:
         name: "SampleIISWebsite"
         physical_path: "C:\\inetpub\\wwwroot\\samples-simple-iis-website"
         state: started
