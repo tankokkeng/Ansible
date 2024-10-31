@@ -95,6 +95,7 @@
     - name: Ensure Default.aspx is set as the default document
       community.windows.win_iis_webapplication:
         name: "SampleIISWebsite"        
+        site: "SampleIISWebsite"
         physical_path: "C:\\inetpub\\wwwroot\\samples-simple-iis-website"
         default_documents:
           - Default.aspx
