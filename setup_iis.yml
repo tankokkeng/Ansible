@@ -95,6 +95,8 @@
     - name: Ensure Default.aspx is set as the default document
       community.windows.win_iis_webapplication:
         name: "SampleIISWebsite"
+        application_pool: 'DefaultAppPool'
+        path: '/'
         site: "Default Web Site"
         default_documents:
           - Default.aspx
