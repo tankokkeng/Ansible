@@ -45,7 +45,7 @@
         var: disable_ipv6_result
 
     - name: Ensure Chocolatey is installed
-      ansible.windows.win_chocolatey:
+      win_chocolatey:
         name: chocolatey
         state: present
       register: chocolatey_result
@@ -55,7 +55,7 @@
         var: chocolatey_result
 
     - name: Install Git using Chocolatey
-      ansible.windows.win_chocolatey:
+      win_chocolatey:
         name: git
         state: present
       register: git_install_result
