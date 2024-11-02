@@ -44,6 +44,26 @@
       debug:
         var: disable_ipv6_result
 
+    - name: Download and install Chocolatey
+      ansible.windows.win_shell: |
+        Set-ExecutionPolicy Bypass -Scope Process -Force;
+        [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12;
+        Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+      args:
+        executable: powershell.exe
+      register: choco_install
+      ignore_errors: yes  # Ignore errors if Chocolatey is already installed
+
+    - name: Verify Chocolatey installation
+      ansible.windows.win_command: choco --version
+      register: choco_version
+      failed_when: choco_version.rc != 0
+      changed_when: false
+
+    - name: Display Chocolatey version
+      debug:
+        msg: "Chocolatey installed. Version: {{ choco_version.stdout }}"        
+
     - name: Ensure Chocolatey is installed
       win_chocolatey:
         name: chocolatey
