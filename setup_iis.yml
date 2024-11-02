@@ -13,6 +13,16 @@
       debug:
         var: hostname_result
 
+    - name: Reboot server if hostname was changed
+      ansible.windows.win_reboot:
+      when: hostname_result.changed
+      register: reboot_result
+
+    - name: Wait for server to come back online
+      ansible.windows.win_wait_for:
+        timeout: 300
+      when: hostname_result.changed        
+
     - name: Install IIS with .NET Framework, ASP.NET, ISAPI, and .NET Extensibility components
       ansible.windows.win_feature:
         name:
