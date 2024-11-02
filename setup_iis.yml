@@ -43,6 +43,11 @@
     - name: Display result of IPv6 disable task
       debug:
         var: disable_ipv6_result
+        
+    - name: Remove Chocolatey directory if any, before download and install
+      ansible.windows.win_file:
+        path: C:\ProgramData\chocolatey
+        state: absent
 
     - name: Download and install Chocolatey
       ansible.windows.win_shell: |
