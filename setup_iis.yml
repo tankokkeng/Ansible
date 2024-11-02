@@ -100,14 +100,14 @@
         var: git_install_result
 
     - name: Check if IIS site "SampleIISWebsite" exists
-      ansible.windows.win_iis_website:
+      community.windows.win_iis_website:
         name: "SampleIISWebsite"
         state: started
       register: site_check
       ignore_errors: true  # Ignore errors if the site does not exist
 
     - name: Delete IIS site "SampleIISWebsite" if it exists
-      ansible.windows.win_iis_website:
+      community.windows.win_iis_website:
         name: "SampleIISWebsite"
         state: absent
       when: site_check is defined and site_check.failed == false
