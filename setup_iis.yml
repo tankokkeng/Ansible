@@ -117,6 +117,14 @@
         state: absent
       when: site_check is defined and site_check.failed == false
 
+    - name: Configure IIS site for the cloned website
+      community.windows.win_iis_website:
+        name: "SampleIISWebsite"
+        physical_path: "C:\\inetpub\\wwwroot\\samples-simple-iis-website"
+        state: started
+        port: 80
+      register: iis_site_result      
+
     - name: Clone IIS website code from GitHub if not already present
       ansible.windows.win_command: |
         git clone https://github.com/AzureWorkshops/samples-simple-iis-website C:\inetpub\wwwroot\samples-simple-iis-website
@@ -132,14 +140,6 @@
         chdir: C:\inetpub\wwwroot\samples-simple-iis-website
       when: git_clone_result.failed  # Only run if the clone command failed (repo already exists)
       register: git_pull_result
-
-    - name: Configure IIS site for the cloned website
-      community.windows.win_iis_website:
-        name: "SampleIISWebsite"
-        physical_path: "C:\\inetpub\\wwwroot\\samples-simple-iis-website"
-        state: started
-        port: 80
-      register: iis_site_result
 
     - name: Display result of IIS site configuration
       debug:
