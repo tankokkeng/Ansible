@@ -89,10 +89,10 @@
       debug:
         var: git_install_result
 
-    - name: Remove SampleIISWebsite codes
+    - name: Ensure IIS website folder exists
       ansible.windows.win_file:
         path: C:\inetpub\wwwroot\samples-simple-iis-website
-        state: absent
+        state: directory
 
     - name: Check if IIS site "SampleIISWebsite" exists
       community.windows.win_iis_website:
