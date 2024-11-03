@@ -122,7 +122,7 @@
         chdir: C:\inetpub\wwwroot
       register: git_clone_result
       ignore_errors: yes  # Ignore errors if repo already exists
-      creates: C:\inetpub\wwwroot\samples-simple-iis-website  # Prevents cloning if the directory exists
+      
 
     - name: Update IIS website code if already cloned
       ansible.windows.win_command: |
