@@ -4,9 +4,9 @@
   gather_facts: no
 
   tasks:
-    - name: Set the hostname to "PG-IIS"
+    - name: Set the hostname to "PG-IIS01"
       ansible.windows.win_hostname:
-        name: PG-IIS
+        name: PG-IIS01
       register: hostname_result
 
     - name: Display result of hostname change
