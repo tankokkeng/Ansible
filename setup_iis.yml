@@ -39,3 +39,19 @@
       ansible.windows.win_powershell:
         script: |
           Start-Process powershell -ArgumentList "Remove-WebSite -Name 'Default Web Site'" -Verb RunAs
+
+    - name: Install Git
+      win_chocolatey:
+        name: git
+        state: present
+
+    - name: Clone MySampleIIS repository
+      win_command: git clone https://github.com/tankokkeng/MySampleIIS.git C:\inetpub\wwwroot\MySampleIIS
+      args:
+        creates: C:\inetpub\wwwroot\MySampleIIS
+
+    - name: Create MySampleIIS site
+      ansible.windows.win_powershell:
+        script: |
+          Import-Module WebAdministration
+          New-Website -Name "MySampleIIS" -Port 80 -PhysicalPath "C:\inetpub\wwwroot\MySampleIIS" -ApplicationPool "DefaultAppPool"
