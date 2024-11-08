@@ -1,7 +1,22 @@
 ---
-- name: Rename Windows Server
+- name: Setup Windows Server
   hosts: windows
   tasks:
     - name: Rename the server
       win_hostname:
         name: PS-IIS01
+
+    - name: Install IIS
+      win_feature:
+        name: Web-Server
+        state: present
+
+    - name: Install ASP.NET
+      win_feature:
+        name: Web-Asp-Net45
+        state: present
+
+    - name: Install Chocolatey
+      win_chocolatey:
+        name: chocolatey
+        state: present
