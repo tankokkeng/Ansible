@@ -25,7 +25,16 @@
         name: Web-Asp-Net45
         state: present
 
+    - name: Install IIS Management Tools
+      win_feature:
+        name: Web-Mgmt-Tools
+        state: present
+
     - name: Install Chocolatey
       win_chocolatey:
         name: chocolatey
         state: present
+
+    - name: Delete Default IIS Site
+      win_command: 
+        cmd: "Remove-WebSite -Name 'Default Web Site'"
