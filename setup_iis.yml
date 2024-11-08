@@ -7,12 +7,13 @@
         name: PS-IIS01
       register: rename_result
 
-    - name: Reboot the server if necessary
-      win_reboot:
-        when: rename_result.reboot_required
-        msg: "Rebooting the server after renaming"
-        pre_reboot_delay: 0
-        post_reboot_delay: 120  # Wait for 2 minutes (120 seconds) after reboot
+    - block:
+        - name: Reboot the server if necessary
+          win_reboot:
+            msg: "Rebooting the server after renaming"
+            pre_reboot_delay: 0
+            post_reboot_delay: 120  # Wait for 2 minutes (120 seconds) after reboot
+      when: rename_result.reboot_required
 
     - name: Install IIS
       win_feature:
