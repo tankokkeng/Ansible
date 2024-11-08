@@ -6,6 +6,12 @@
       win_hostname:
         name: PS-IIS01
 
+    - name: Reboot the server
+      win_reboot:
+        msg: "Rebooting the server after renaming"
+        pre_reboot_delay: 0
+        post_reboot_delay: 120  # Wait for 2 minutes (120 seconds) after reboot
+
     - name: Install IIS
       win_feature:
         name: Web-Server
