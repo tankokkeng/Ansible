@@ -1,6 +1,6 @@
 ---
 - name: Setup Windows Server
-  hosts: windows
+  hosts: IIS
   tasks:
     - name: Rename the server
       win_hostname:
