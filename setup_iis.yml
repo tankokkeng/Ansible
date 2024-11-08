@@ -36,6 +36,6 @@
         state: present
 
     - name: Delete Default IIS Site
-      win_powershell:
+      ansible.windows.win_powershell:
         script: |
           Start-Process powershell -ArgumentList "Remove-WebSite -Name 'Default Web Site'" -Verb RunAs
